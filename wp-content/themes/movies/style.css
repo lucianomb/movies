@@ -6,3 +6,30 @@ Author URI: http://lucianomb.com.br
 Description: A beautiful list of movies
 Version: 1.0
 */
+
+/* General */
+body {
+  margin: 0;
+  padding: 0;
+  background: #1F1033;  
+}
+
+h1.logo {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 42px;
+  color: #fff;
+  text-align: center;
+}
+
+p {
+  margin: 0;
+  font-family: 'Open Sans', serif;
+  &.title {
+    font-weight: bold;
+    font-size: 22px;
+  }
+}
+
+span {
+  font-family: 'Open Sans', serif;
+}

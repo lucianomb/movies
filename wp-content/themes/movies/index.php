@@ -1,20 +1,11 @@
-<?php get_header(); ?>
+<?php 
+get_header();
 
-<div class="dynamic-bg" ng-style="{'background-image': 'url(' + currentMovie + ')'}" ng-hide="bgHidden"></div>
+if ( have_posts() ) : while ( have_posts() ) : the_post();
+  
+  the_content();
 
-<ul class="catalog">
-  <li ng-repeat="movie in catalog">
-    <a href="#" class="movie-thumb" ng-mouseenter="$parent.currentMovie = movie.poster_url; $parent.bgHidden = false" ng-mouseleave="$parent.bgHidden = true">
-      <div class="bg">
-        <img ng-src="{{movie.poster_url}}" alt="{{movie.title}}">
-        <div class="extra">
-          <span>{{movie.year}} - Rating: {{movie.rating}}</span>
-          <p class="title">{{movie.title}}</p>
-        </div>
-        <div class="description" ng-bind-html="getHtml(movie.short_description)"></div>
-      </div>
-    </a>
-  </li>
-</ul>
+endwhile; endif;
 
-<?php get_footer(); ?>
+get_footer();
+?>

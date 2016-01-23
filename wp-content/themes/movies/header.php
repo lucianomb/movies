@@ -5,5 +5,5 @@
   <title>Movies</title>
   <?php wp_head(); ?>
 </head>
-<body ng-controller="MoviesCtrl">
+<body>
   <h1 class="logo">Movies for Moxie</h1>

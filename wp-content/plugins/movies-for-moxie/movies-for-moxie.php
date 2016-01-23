@@ -25,6 +25,11 @@ class Movies_For_Moxie_Plugin {
     add_action('init', array($this, 'add_movies_endpoint'));
     // Add movies endpoint data
     add_action('template_redirect', array($this, 'add_movies_endpoint_data'));
+    // Enqueue catalog scripts and styles
+    add_action('wp_enqueue_scripts', array($this, 'enqueue_catalog_scripts'));
+
+    // Add shortcode for showing the catalog
+    add_shortcode('catalog', array($this, 'render_catalog_html') );
   }
 
   /**
@@ -50,7 +55,7 @@ class Movies_For_Moxie_Plugin {
    * Add a meta box called 'Movie Details'
    */
   function add_movies_meta_box() {
-    add_meta_box('movie_details', 'Movie Details', array($this, 'show_movie_details_meta_box'), 'movies', 'normal', 'high');
+    add_meta_box('movie_details', __('Movie Details'), array($this, 'show_movie_details_meta_box'), 'movies', 'normal', 'high');
   }
 
   /**
@@ -73,27 +78,27 @@ class Movies_For_Moxie_Plugin {
     
     // Movie poster URL      
     echo '<tr>
-    <th><label for="poster_url">Poster URL</label></th>
+    <th><label for="poster_url">' . __('Poster URL') . '</label></th>
     <td><input type="url" name="poster_url" id="poster_url" value="' . $poster_url . '"/>
-    <span class="description">Recommended size: <strong>410x607px</strong></span></td>
+    <span class="description">' . __('Recommended size:') . '<strong>410x607px</strong></span></td>
     </tr>';
     
     // Rating      
     echo '<tr>
-    <th><label for="rating">Rating</label></th>
+    <th><label for="rating">' . __('Rating') . '</label></th>
     <td><input type="number" name="rating" id="rating" min="0" max="10" step=".1" value="' . $rating . '"/>
-    <span class="description">A number between <strong>0</strong> and <strong>10</strong></span></td>
+    <span class="description">' . __('A number between <strong>0</strong> and <strong>10</strong>') . '</span></td>
     </tr>';
     
     // Year of release      
     echo '<tr>
-    <th><label for="year">Year of Release</label></th>
+    <th><label for="year">' . __('Year of Release') . '</label></th>
     <td><input type="number" name="year" id="year" max="9999" value="' . $year . '"/></td>
     </tr>';
     
     // Short description
     echo '<tr>
-    <th><label for="description">Short Description</label></th>
+    <th><label for="description">' . __('Short Description') . '</label></th>
     <td>';
     
     wp_editor($description, 'description', array('media_buttons' => false, 'teeny' => true, 'textarea_rows' => 4, 'quicktags' => false));
@@ -223,6 +228,38 @@ class Movies_For_Moxie_Plugin {
     // generate json
     wp_send_json($movies_data);
 
+  }
+
+  /**
+   * Render catalog HTML
+   */
+  function render_catalog_html() {
+    return '<div ng-controller="MoviesCtrl">
+      <div class="dynamic-bg" ng-style="{\'background-image\': \'url(\' + currentMovie + \')\'}" ng-hide="bgHidden"></div>
+      <ul class="catalog">
+        <li ng-repeat="movie in catalog">
+          <a href="#" class="movie-thumb" ng-mouseenter="$parent.currentMovie = movie.poster_url; $parent.bgHidden = false" ng-mouseleave="$parent.bgHidden = true">
+            <div class="bg">
+              <img ng-src="{{movie.poster_url}}" alt="{{movie.title}}">
+              <div class="extra">
+                <span>{{movie.year}} - Rating: {{movie.rating}}</span>
+                <p class="title">{{movie.title}}</p>
+              </div>
+              <div class="description" ng-bind-html="getHtml(movie.short_description)"></div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>';
+  }
+
+  /**
+   * Enqueue styles and scripts
+   */
+  function enqueue_catalog_scripts() {
+    wp_enqueue_style('catalog-css', plugins_url( 'css/catalog.css', __FILE__ ));
+    wp_enqueue_script('angular', plugins_url( 'js/angular.min.js', __FILE__ ), array(), false, true);
+    wp_enqueue_script('catalog-js', plugins_url( 'js/catalog.js', __FILE__ ), array(), false, true);
   }
 
 }

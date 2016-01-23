@@ -21,6 +21,10 @@ class Movies_For_Moxie_Plugin {
     add_action('add_meta_boxes', array($this, 'add_movies_meta_box'));
     // Save movies custom fields
     add_action('save_post', array($this, 'save_movie_meta'));
+    // Add movies endpoint
+    add_action('init', array($this, 'add_movies_endpoint'));
+    // Add movies endpoint data
+    add_action('template_redirect', array($this, 'add_movies_endpoint_data'));
   }
 
   /**
@@ -174,6 +178,52 @@ class Movies_For_Moxie_Plugin {
 
   }
    
+  /**
+   * Movies API endpoint
+   */
+  function add_movies_endpoint() {
+    add_rewrite_rule( 'movies.json', 'index.php?movies=1', 'top' );
+  }
+
+  /**
+   * Movies API endpoint data
+   */
+  function add_movies_endpoint_data() {
+    global $wp_query;
+
+    $movies = $wp_query->get('movies');
+
+    if (!$movies) {
+      return;
+    }
+
+    $movies_data = array();
+
+    // query the movies
+    $args = array(
+      'post_type' => 'movies',
+      'posts_per_page' => 100
+    );
+    $movies_query = new WP_Query($args);
+
+    // get data for each movie
+    if ($movies_query->have_posts()) : while ($movies_query->have_posts()) : $movies_query->the_post();
+
+      $movies_data[] = array(
+        'id' => $movies_query->post->ID,
+        'title' => get_the_title(),
+        'poster_url' => get_post_meta($movies_query->post->ID, 'poster_url', true),
+        'rating' => get_post_meta($movies_query->post->ID, 'rating', true),
+        'year' => get_post_meta($movies_query->post->ID, 'year', true),
+        'description' => get_post_meta($movies_query->post->ID, 'description', true)
+      );
+
+    endwhile; wp_reset_postdata(); endif;
+
+    // generate json
+    wp_send_json($movies_data);
+
+  }
 
 }
  

@@ -19,6 +19,8 @@ class Movies_For_Moxie_Plugin {
     add_action('init', array($this, 'cpt_movies' ));
     // Add movies meta box
     add_action('add_meta_boxes', array($this, 'add_movies_meta_box'));
+    // Save movies custom fields
+    add_action('save_post', array($this, 'save_movie_meta'));
   }
 
   /**
@@ -97,6 +99,79 @@ class Movies_For_Moxie_Plugin {
     echo '</table>';
   }
 
+  /**
+   * Save the movie details
+   */
+  function save_movie_meta($post_id) {   
+    
+    // verify nonce
+    if (!wp_verify_nonce($_POST['movie_meta_box_nonce'], basename(__FILE__))) {
+      return $post_id;
+    }
+
+    // check if this is an autosave
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+      return $post_id;
+    }
+
+    // check permissions
+    if ('movies' == $_POST['post_type']) {
+      if (!current_user_can('edit_page', $post_id)) {
+        return $post_id;
+      }
+    } elseif (!current_user_can('edit_post', $post_id)) {
+      return $post_id;
+    }  
+
+    // get the old values
+    $old_poster_url = get_post_meta($post_id, "poster_url", true);
+    $old_rating = get_post_meta($post_id, "rating", true);
+    $old_year = get_post_meta($post_id, "year", true);
+    $old_description = get_post_meta($post_id, "description", true);
+
+    // get the new values
+    $poster_url = $_POST['poster_url'];
+    $rating = $_POST['rating'];
+    $year = $_POST['year'];
+    $description = $_POST['description'];
+
+    // update the poster url
+    if ($poster_url && $poster_url != $old_poster_url) {
+      // if the value existed and was changed, update the meta
+      update_post_meta($post_id, "poster_url", $poster_url);
+    } elseif ($poster_url == '' && $old_poster_url) {
+      // if the value is empty and there's an old value, delete the meta from db
+      delete_post_meta($post_id, "poster_url", $old_poster_url);
+    }
+
+    // update the rating
+    if ($rating && $rating != $old_rating) {
+      // if the value existed and was changed, update the meta
+      update_post_meta($post_id, "rating", $rating);
+    } elseif ($rating == '' && $old_rating) {
+      // if the value is empty and there's an old value, delete the meta from db
+      delete_post_meta($post_id, "rating", $old_rating);
+    }
+
+    // update the year
+    if ($year && $year != $year) {
+      // if the value existed and was changed, update the meta
+      update_post_meta($post_id, "year", $year);
+    } elseif ($year == '' && $year) {
+      // if the value is empty and there's an old value, delete the meta from db
+      delete_post_meta($post_id, "year", $year);
+    }
+
+    // update the description
+    if ($description && $description != $old_description) {
+      // if the value existed and was changed, update the meta
+      update_post_meta($post_id, "description", $description);
+    } elseif ($description == '' && $old_description) {
+      // if the value is empty and there's an old value, delete the meta from db
+      delete_post_meta($post_id, "description", $old_description);
+    }
+
+  }
    
 
 }

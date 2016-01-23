@@ -36,7 +36,8 @@ class Movies_For_Moxie_Plugin {
         'menu_icon' => 'dashicons-editor-video',
         'public' => true,
         'has_archive' => true,
-        'rewrite' => array('slug' => 'movies')
+        'rewrite' => array('slug' => 'movies'),
+        'supports' => array('title')
       )
     );
   }

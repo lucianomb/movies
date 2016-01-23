@@ -8,7 +8,7 @@
       <div class="bg">
         <img ng-src="{{movie.poster_url}}" alt="{{movie.title}}">
         <div class="extra">
-          <span>{{movie.year}} - Score: {{movie.rating}}/100</span>
+          <span>{{movie.year}} - Rating: {{movie.rating}}</span>
           <p class="title">{{movie.title}}</p>
         </div>
         <div class="description" ng-bind-html="getHtml(movie.short_description)"></div>

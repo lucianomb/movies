@@ -77,8 +77,8 @@ class Movies_For_Moxie_Plugin {
     // Rating      
     echo '<tr>
     <th><label for="rating">Rating</label></th>
-    <td><input type="number" name="rating" id="rating" min="0" max="100" value="' . $rating . '"/>
-    <span class="description">A number between <strong>0</strong> and <strong>100</strong></span></td>
+    <td><input type="number" name="rating" id="rating" min="0" max="10" step=".1" value="' . $rating . '"/>
+    <span class="description">A number between <strong>0</strong> and <strong>10</strong></span></td>
     </tr>';
     
     // Year of release      
@@ -155,12 +155,12 @@ class Movies_For_Moxie_Plugin {
     }
 
     // update the year
-    if ($year && $year != $year) {
+    if ($year && $year != $old_year) {
       // if the value existed and was changed, update the meta
       update_post_meta($post_id, "year", $year);
-    } elseif ($year == '' && $year) {
+    } elseif ($year == '' && $old_year) {
       // if the value is empty and there's an old value, delete the meta from db
-      delete_post_meta($post_id, "year", $year);
+      delete_post_meta($post_id, "year", $old_year);
     }
 
     // update the description

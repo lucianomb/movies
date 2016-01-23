@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="app">
 <head>
   <meta charset="UTF-8">
   <title>Movies</title>
-  <link href="<?php bloginfo( 'stylesheet_url' ); ?>" rel="stylesheet" media="all" />
+  <?php wp_head(); ?>
 </head>
-<body>
+<body ng-controller="MoviesCtrl">
+  <h1 class="logo">Movies for Moxie</h1>

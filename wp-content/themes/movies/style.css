@@ -21,13 +21,20 @@ h1.logo {
   text-align: center;
 }
 
+h2 {
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+  color: #fff;
+}
+
 p {
   margin: 0;
   font-family: 'Open Sans', serif;
-  &.title {
-    font-weight: bold;
-    font-size: 22px;
-  }
+}
+
+.title {
+  font-weight: bold;
+  font-size: 22px;
 }
 
 span {

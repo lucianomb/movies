@@ -29,7 +29,7 @@ class Movies_For_Moxie_Plugin {
     add_action('wp_enqueue_scripts', array($this, 'enqueue_catalog_scripts'));
 
     // Add shortcode for showing the catalog
-    add_shortcode('catalog', array($this, 'render_catalog_html') );
+    add_shortcode('list-movies', array($this, 'render_catalog_html') );
   }
 
   /**
@@ -202,7 +202,9 @@ class Movies_For_Moxie_Plugin {
       return;
     }
 
-    $movies_data = array();
+    $movies_data = array(
+      'data' => array()
+    );
 
     // query the movies
     $args = array(
@@ -214,19 +216,21 @@ class Movies_For_Moxie_Plugin {
     // get data for each movie
     if ($movies_query->have_posts()) : while ($movies_query->have_posts()) : $movies_query->the_post();
 
-      $movies_data[] = array(
+      $movies_data['data'][] = array(
         'id' => $movies_query->post->ID,
         'title' => get_the_title(),
         'poster_url' => get_post_meta($movies_query->post->ID, 'poster_url', true),
         'rating' => get_post_meta($movies_query->post->ID, 'rating', true),
         'year' => get_post_meta($movies_query->post->ID, 'year', true),
-        'description' => get_post_meta($movies_query->post->ID, 'description', true)
+        'short_description' => get_post_meta($movies_query->post->ID, 'description', true)
       );
 
     endwhile; wp_reset_postdata(); endif;
 
     // generate json
+    status_header( 200 );
     wp_send_json($movies_data);
+    die();
 
   }
 
@@ -235,10 +239,11 @@ class Movies_For_Moxie_Plugin {
    */
   function render_catalog_html() {
     return '<div ng-controller="MoviesCtrl">
-      <div class="dynamic-bg" ng-style="{\'background-image\': \'url(\' + currentMovie + \')\'}" ng-hide="bgHidden"></div>
-      <ul class="catalog">
+      <div class="dynamic-bg" ng-style="{\'background-image\': \'url(\' + bg.currentMovie + \')\'}" ng-hide="bg.bgHidden"></div>
+      <h2 ng-if="catalog.length <= 0">No movies were found! Please come back later! ;)</h2>
+      <ul class="catalog" ng-if="catalog.length > 0">
         <li ng-repeat="movie in catalog">
-          <a href="#" class="movie-thumb" ng-mouseenter="$parent.currentMovie = movie.poster_url; $parent.bgHidden = false" ng-mouseleave="$parent.bgHidden = true">
+          <a href="#" class="movie-thumb" ng-mouseenter="bg.currentMovie = movie.poster_url; bg.bgHidden = false" ng-mouseleave="bg.bgHidden = true">
             <div class="bg">
               <img ng-src="{{movie.poster_url}}" alt="{{movie.title}}">
               <div class="extra">

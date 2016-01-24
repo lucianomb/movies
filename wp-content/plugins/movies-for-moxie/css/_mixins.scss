@@ -1,0 +1,40 @@
+// Mixins
+@mixin box-sizing($attrs) {
+  -webkit-box-sizing: $attrs;
+  -moz-box-sizing: $attrs;
+  box-sizing: $attrs;
+}
+
+@mixin transition($attrs) {
+  -webkit-transition: $attrs;
+  transition: $attrs;
+}
+
+@mixin transform($attrs) {
+  -webkit-transform: $attrs;
+  -ms-transform: $attrs;
+  transform: $attrs;
+}
+
+@mixin transform-style($attrs) {
+  -webkit-transform-style: $attrs;
+  -ms-transform-style: $attrs;
+  transform-style: $attrs;
+}
+
+@mixin perspective($attrs) {
+  -webkit-perspective: $attrs;
+  -ms-perspective: $attrs;
+  perspective: $attrs;
+}
+
+@mixin transform-origin($attrs) {
+  -webkit-transform-origin: $attrs;
+  -ms-transform-origin: $attrs;
+  transform-origin: $attrs;
+}
+
+@mixin filter($attrs) {
+  -webkit-filter: $attrs;
+  filter: $attrs;
+}

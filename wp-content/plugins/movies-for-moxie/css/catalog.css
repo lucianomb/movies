@@ -21,7 +21,8 @@
 
 /* Catalog */
 .catalog {
-  text-align: center; }
+  text-align: center;
+  padding: 0; }
   .catalog li {
     display: inline-block;
     margin: 15px; }

@@ -260,7 +260,7 @@ class Movies_For_Moxie_Plugin {
   function render_catalog_html() {
     return '<div ng-controller="MoviesCtrl">
       <div class="dynamic-bg" ng-style="{\'background-image\': \'url(\' + bg.currentMovie + \')\'}" ng-hide="bg.bgHidden"></div>
-      <h2 ng-if="catalog.length <= 0">No movies were found! Please come back later! ;)</h2>
+      <h2 ng-if="catalog.length <= 0" ng-cloak>No movies were found! Please come back later! ;)</h2>
       <ul class="catalog" ng-if="catalog.length > 0">
         <li ng-repeat="movie in catalog">
           <a href="#" class="movie-thumb" ng-mouseenter="bg.currentMovie = movie.poster_url; bg.bgHidden = false" ng-mouseleave="bg.bgHidden = true">

@@ -1,33 +1,6 @@
 /* Fonts */
 @import url(https://fonts.googleapis.com/css?family=Open+Sans|Montserrat);
 
-/* General */
-body {
-  margin: 0;
-  padding: 0;
-  background: #1F1033;  
-}
-
-h1.logo {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 42px;
-  color: #fff;
-  text-align: center;
-}
-
-p {
-  margin: 0;
-  font-family: 'Open Sans', serif;
-  &.title {
-    font-weight: bold;
-    font-size: 22px;
-  }
-}
-
-span {
-  font-family: 'Open Sans', serif;
-}
-
 /* Dynamic Background */
 .dynamic-bg {
   position: fixed;
@@ -35,7 +8,7 @@ span {
   height: 100%;
   top: 0;
   left: 0;
-  -webkit-filter: blur(5px);
+  -webkit-filter: blur(10px);
   transform: scale(10px);
   -webkit-transform: scale(10px);
   background-size: cover;

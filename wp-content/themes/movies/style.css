@@ -27,8 +27,9 @@ h2 {
   color: #fff;
 }
 
-p {
+p, .description {
   margin: 0;
+  font-size: 16px;
   font-family: 'Open Sans', serif;
 }
 

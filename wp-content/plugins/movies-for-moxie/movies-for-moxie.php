@@ -25,6 +25,8 @@ class Movies_For_Moxie_Plugin {
     add_action('init', array($this, 'add_movies_endpoint'));
     // Add movies endpoint data
     add_action('template_redirect', array($this, 'add_movies_endpoint_data'));
+    // Delete catalog cache
+    add_action('save_post', array($this, 'remove_catalog_cache'));
     // Enqueue catalog scripts and styles
     add_action('wp_enqueue_scripts', array($this, 'enqueue_catalog_scripts'));
 
@@ -202,36 +204,54 @@ class Movies_For_Moxie_Plugin {
       return;
     }
 
-    $movies_data = array(
-      'data' => array()
-    );
+    // verify if there's a cached version of the catalog
+    $movies_data = get_transient('catalog_movies');
 
-    // query the movies
-    $args = array(
-      'post_type' => 'movies',
-      'posts_per_page' => 100
-    );
-    $movies_query = new WP_Query($args);
-
-    // get data for each movie
-    if ($movies_query->have_posts()) : while ($movies_query->have_posts()) : $movies_query->the_post();
-
-      $movies_data['data'][] = array(
-        'id' => $movies_query->post->ID,
-        'title' => get_the_title(),
-        'poster_url' => get_post_meta($movies_query->post->ID, 'poster_url', true),
-        'rating' => get_post_meta($movies_query->post->ID, 'rating', true),
-        'year' => get_post_meta($movies_query->post->ID, 'year', true),
-        'short_description' => get_post_meta($movies_query->post->ID, 'description', true)
+    // if there's no cached version, query the results
+    if (!$movies_data) {
+      
+      $movies_data = array(
+        'data' => array()
       );
 
-    endwhile; wp_reset_postdata(); endif;
+      // query the movies
+      $args = array(
+        'post_type' => 'movies',
+        'posts_per_page' => 100
+      );
+      $movies_query = new WP_Query($args);
+
+      // get data for each movie
+      if ($movies_query->have_posts()) : while ($movies_query->have_posts()) : $movies_query->the_post();
+
+        $movies_data['data'][] = array(
+          'id' => $movies_query->post->ID,
+          'title' => get_the_title(),
+          'poster_url' => get_post_meta($movies_query->post->ID, 'poster_url', true),
+          'rating' => get_post_meta($movies_query->post->ID, 'rating', true),
+          'year' => get_post_meta($movies_query->post->ID, 'year', true),
+          'short_description' => get_post_meta($movies_query->post->ID, 'description', true)
+        );
+
+      endwhile; wp_reset_postdata(); endif;
+
+      // cache results
+      set_transient('catalog_movies', $movies_data);
+
+    }
 
     // generate json
     status_header( 200 );
     wp_send_json($movies_data);
     die();
 
+  }
+
+  /**
+   * Delete the catalog cache
+   */
+  function remove_catalog_cache() {
+    delete_transient('catalog_movies');
   }
 
   /**
@@ -250,7 +270,7 @@ class Movies_For_Moxie_Plugin {
                 <span>{{movie.year}} - Rating: {{movie.rating}}</span>
                 <p class="title">{{movie.title}}</p>
               </div>
-              <div class="description" ng-bind-html="getHtml(movie.short_description)"></div>
+              <div class="description"><p ng-bind-html="getHtml(movie.short_description)"></p></div>
             </div>
           </a>
         </li>
